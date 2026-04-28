@@ -1,0 +1,110 @@
+openapi: "3.0.0"
+info:
+  title: Demo Dummy API
+  version: 1.0.0
+  description: Dummy JSON endpoints backed by hardcoded user fixtures.
+servers:
+  - url: http://localhost:8080
+paths:
+  /api:
+    get:
+      summary: API home
+      responses:
+        '200':
+          description: API entry information
+  /api/users:
+    get:
+      summary: Get all users with nested dummy data
+      responses:
+        '200':
+          description: User details list
+  /api/users/{id}:
+    get:
+      summary: Get one user with nested dummy data
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: User detail
+        '404':
+          description: User not found
+  /api/users/{id}/records:
+    get:
+      summary: Get one user and their records
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: User records
+        '404':
+          description: User not found
+  /api/farms:
+    get:
+      summary: Get farms
+      responses:
+        '200':
+          description: Farm list
+  /api/farms/{id}:
+    get:
+      summary: Get one farm
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Farm detail
+        '404':
+          description: Farm not found
+  /api/farms/{id}/members:
+    get:
+      summary: Get members of a farm
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Farm member list
+        '404':
+          description: Farm not found
+  /api/farm-members:
+    get:
+      summary: Get all farm members
+      responses:
+        '200':
+          description: Farm member list
+  /api/categories:
+    get:
+      summary: Get categories
+      responses:
+        '200':
+          description: Category list
+  /api/records:
+    get:
+      summary: Get all records
+      responses:
+        '200':
+          description: Record list
+  /api/monthly-history:
+    get:
+      summary: Get monthly history
+      responses:
+        '200':
+          description: Monthly history list
