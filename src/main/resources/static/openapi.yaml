@@ -1,6 +1,6 @@
 openapi: "3.0.0"
 info:
-  title: Demo Dummy API
+  title: DonDocSpring Dummy API
   version: 1.0.0
   description: Dummy JSON endpoints backed by hardcoded user fixtures.
 servers:
