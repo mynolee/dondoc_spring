@@ -18,35 +18,18 @@ public class RecordController {
         this.recordRepository = recordRepository;
     }
 
-    private static final List<RecordDto.CategoryResponse> CATEGORIES = List.of(
-            new RecordDto.CategoryResponse(1L, "월급", "salary", "INCOME"),
-            new RecordDto.CategoryResponse(2L, "식비", "food", "EXPENSE"),
-            new RecordDto.CategoryResponse(3L, "교통", "bus", "EXPENSE"),
-            new RecordDto.CategoryResponse(4L, "용돈", "gift", "INCOME")
-    );
-
     @GetMapping("/categories")
     public List<RecordDto.CategoryResponse> getCategories() {
-        List<RecordDto.CategoryResponse> dbCategories = recordRepository.findAllCategories();
-
-        return CATEGORIES;
+        return recordRepository.findAllCategories();
     }
 
     @GetMapping("/records")
     public List<RecordDto.RecordResponse> getRecords() {
-        List<RecordDto.RecordResponse> dbRecords = recordRepository.findAllRecords();
-
-        return UserController.USER_FIXTURES.stream()
-                .flatMap(userFixture -> userFixture.records().stream())
-                .toList();
+        return recordRepository.findAllRecords();
     }
 
     @GetMapping("/monthly-history")
     public List<RecordDto.MonthlyHistoryResponse> getMonthlyHistories() {
-        List<RecordDto.MonthlyHistoryResponse> dbMonthlyHistories = recordRepository.findAllMonthlyHistories();
-
-        return UserController.USER_FIXTURES.stream()
-                .map(userFixture -> userFixture.monthlyHistory())
-                .toList();
+        return recordRepository.findAllMonthlyHistories();
     }
 }
