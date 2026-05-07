@@ -3,6 +3,9 @@ package com.example.dondocspring.controller;
 import com.example.dondocspring.dto.farm.FarmDto;
 import com.example.dondocspring.dto.record.RecordDto;
 import com.example.dondocspring.dto.user.UserDto;
+import com.example.dondocspring.repository.FarmRepository;
+import com.example.dondocspring.repository.RecordRepository;
+import com.example.dondocspring.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +21,20 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 public class UserController {
+
+    private final UserRepository userRepository;
+    private final FarmRepository farmRepository;
+    private final RecordRepository recordRepository;
+
+    public UserController(
+            UserRepository userRepository,
+            FarmRepository farmRepository,
+            RecordRepository recordRepository
+    ) {
+        this.userRepository = userRepository;
+        this.farmRepository = farmRepository;
+        this.recordRepository = recordRepository;
+    }
 
     public static final List<UserDto.UserFixture> USER_FIXTURES = List.of(
             new UserDto.UserFixture(
@@ -73,6 +90,15 @@ public class UserController {
 
     @GetMapping("/users")
     public List<UserDto.UserDetailResponse> getUsers() {
+        List<UserDto.UserDetailResponse> dbUsers = userRepository.findAll().stream()
+                .map(user -> new UserDto.UserDetailResponse(
+                        user,
+                        farmRepository.findMembersByUserId(user.id()),
+                        recordRepository.findRecordsByUserId(user.id()),
+                        recordRepository.findMonthlyHistoryByUserId(user.id()).orElse(null)
+                ))
+                .toList();
+
         return USER_FIXTURES.stream()
                 .map(fixture -> new UserDto.UserDetailResponse(
                         fixture.user(),
@@ -85,6 +111,12 @@ public class UserController {
 
     @GetMapping("/users/{id}")
     public UserDto.UserDetailResponse getUser(@PathVariable Long id) {
+        UserDto.UserResponse dbUser = userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found"));
+        List<FarmDto.FarmMemberResponse> dbFarmMembers = farmRepository.findMembersByUserId(id);
+        List<RecordDto.RecordResponse> dbRecords = recordRepository.findRecordsByUserId(id);
+        RecordDto.MonthlyHistoryResponse dbMonthlyHistory = recordRepository.findMonthlyHistoryByUserId(id).orElse(null);
+
         UserDto.UserFixture fixture = getUserFixture(id);
         return new UserDto.UserDetailResponse(
                 fixture.user(),
@@ -96,6 +128,10 @@ public class UserController {
 
     @GetMapping("/users/{id}/records")
     public UserDto.UserRecordsResponse getUserRecords(@PathVariable Long id) {
+        UserDto.UserResponse dbUser = userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found"));
+        List<RecordDto.RecordResponse> dbRecords = recordRepository.findRecordsByUserId(id);
+
         UserDto.UserFixture fixture = getUserFixture(id);
         return new UserDto.UserRecordsResponse(fixture.user(), fixture.records());
     }
