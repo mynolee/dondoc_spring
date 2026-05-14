@@ -58,6 +58,25 @@ public class RecordRepository {
         ), userId);
     }
 
+    public int save(RecordDto.RecordResponse record) {
+        String sql = """
+                INSERT INTO records (
+                    user_id, category_id, amount, description, memo, record_date
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+                """;
+
+        return jdbcTemplate.update(
+                sql,
+                record.userId(),
+                record.categoryId(),
+                record.amount(),
+                record.description(),
+                record.memo(),
+                record.recordDate()
+        );
+    }
+
     private LocalDate toLocalDate(Date date) {
         if (date == null) {
             return null;

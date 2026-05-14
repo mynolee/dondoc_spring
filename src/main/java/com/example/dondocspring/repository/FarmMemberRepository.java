@@ -64,6 +64,15 @@ public class FarmMemberRepository {
         ), userId);
     }
 
+    public int save(FarmDto.FarmMemberResponse farmMember) {
+        String sql = """
+                INSERT INTO farm_members (user_id, farm_id)
+                VALUES (?, ?)
+                """;
+
+        return jdbcTemplate.update(sql, farmMember.userId(), farmMember.farmId());
+    }
+
     private LocalDateTime toLocalDateTime(Timestamp timestamp) {
         if (timestamp == null) {
             return null;

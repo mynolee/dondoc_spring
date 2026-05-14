@@ -46,6 +46,15 @@ public class FarmRepository {
         ), id).stream().findFirst();
     }
 
+    public int save(FarmDto.FarmResponse farm) {
+        String sql = """
+                INSERT INTO farms (name)
+                VALUES (?)
+                """;
+
+        return jdbcTemplate.update(sql, farm.name());
+    }
+
     private LocalDateTime toLocalDateTime(Timestamp timestamp) {
         if (timestamp == null) {
             return null;

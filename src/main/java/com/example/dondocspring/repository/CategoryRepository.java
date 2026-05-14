@@ -29,4 +29,13 @@ public class CategoryRepository {
                 rs.getString("type")
         ));
     }
+
+    public int save(RecordDto.CategoryResponse category) {
+        String sql = """
+                INSERT INTO categories (name, icon, type)
+                VALUES (?, ?, ?)
+                """;
+
+        return jdbcTemplate.update(sql, category.name(), category.icon(), category.type());
+    }
 }

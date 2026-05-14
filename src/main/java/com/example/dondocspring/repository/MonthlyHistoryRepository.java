@@ -49,4 +49,19 @@ public class MonthlyHistoryRepository {
                 rs.getInt("house_level")
         ), userId).stream().findFirst();
     }
+
+    public int save(RecordDto.MonthlyHistoryResponse monthlyHistory) {
+        String sql = """
+                INSERT INTO monthly_history (user_id, target_month, avg_ratio, house_level)
+                VALUES (?, ?, ?, ?)
+                """;
+
+        return jdbcTemplate.update(
+                sql,
+                monthlyHistory.userId(),
+                monthlyHistory.targetMonth(),
+                monthlyHistory.avgRatio(),
+                monthlyHistory.houseLevel()
+        );
+    }
 }
