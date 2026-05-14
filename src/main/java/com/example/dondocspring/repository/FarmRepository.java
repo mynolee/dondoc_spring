@@ -46,53 +46,6 @@ public class FarmRepository {
         ), id).stream().findFirst();
     }
 
-    public List<FarmDto.FarmMemberResponse> findAllMembers() {
-        String sql = """
-                SELECT id, user_id, farm_id, joined_at
-                FROM farm_members
-                ORDER BY id
-                """;
-
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new FarmDto.FarmMemberResponse(
-                rs.getLong("id"),
-                rs.getObject("user_id", Long.class),
-                rs.getObject("farm_id", Long.class),
-                toLocalDateTime(rs.getTimestamp("joined_at"))
-        ));
-    }
-
-    public List<FarmDto.FarmMemberResponse> findMembersByFarmId(Long farmId) {
-        String sql = """
-                SELECT id, user_id, farm_id, joined_at
-                FROM farm_members
-                WHERE farm_id = ?
-                ORDER BY id
-                """;
-
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new FarmDto.FarmMemberResponse(
-                rs.getLong("id"),
-                rs.getObject("user_id", Long.class),
-                rs.getObject("farm_id", Long.class),
-                toLocalDateTime(rs.getTimestamp("joined_at"))
-        ), farmId);
-    }
-
-    public List<FarmDto.FarmMemberResponse> findMembersByUserId(Long userId) {
-        String sql = """
-                SELECT id, user_id, farm_id, joined_at
-                FROM farm_members
-                WHERE user_id = ?
-                ORDER BY id
-                """;
-
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new FarmDto.FarmMemberResponse(
-                rs.getLong("id"),
-                rs.getObject("user_id", Long.class),
-                rs.getObject("farm_id", Long.class),
-                toLocalDateTime(rs.getTimestamp("joined_at"))
-        ), userId);
-    }
-
     private LocalDateTime toLocalDateTime(Timestamp timestamp) {
         if (timestamp == null) {
             return null;

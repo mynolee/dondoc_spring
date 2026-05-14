@@ -1,6 +1,7 @@
 package com.example.dondocspring.controller;
 
 import com.example.dondocspring.dto.farm.FarmDto;
+import com.example.dondocspring.repository.FarmMemberRepository;
 import com.example.dondocspring.repository.FarmRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,9 +17,11 @@ import java.util.List;
 public class FarmController {
 
     private final FarmRepository farmRepository;
+    private final FarmMemberRepository farmMemberRepository;
 
-    public FarmController(FarmRepository farmRepository) {
+    public FarmController(FarmRepository farmRepository, FarmMemberRepository farmMemberRepository) {
         this.farmRepository = farmRepository;
+        this.farmMemberRepository = farmMemberRepository;
     }
 
     @GetMapping("/farms")
@@ -35,11 +38,11 @@ public class FarmController {
     @GetMapping("/farms/{id}/members")
     public List<FarmDto.FarmMemberResponse> getFarmMembersByFarm(@PathVariable Long id) {
         getFarm(id);
-        return farmRepository.findMembersByFarmId(id);
+        return farmMemberRepository.findByFarmId(id);
     }
 
     @GetMapping("/farm-members")
     public List<FarmDto.FarmMemberResponse> getFarmMembers() {
-        return farmRepository.findAllMembers();
+        return farmMemberRepository.findAll();
     }
 }
