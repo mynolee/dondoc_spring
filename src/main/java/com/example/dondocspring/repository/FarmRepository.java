@@ -1,6 +1,6 @@
 package com.example.dondocspring.repository;
 
-import com.example.dondocspring.dto.farm.FarmDto;
+import com.example.dondocspring.entity.Farm;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -18,35 +18,35 @@ public class FarmRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<FarmDto.FarmResponse> findAll() {
+    public List<Farm> findAll() {
         String sql = """
                 SELECT id, name, created_at
                 FROM farms
                 ORDER BY id
                 """;
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new FarmDto.FarmResponse(
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new Farm(
                 rs.getLong("id"),
                 rs.getString("name"),
                 toLocalDateTime(rs.getTimestamp("created_at"))
         ));
     }
 
-    public Optional<FarmDto.FarmResponse> findById(Long id) {
+    public Optional<Farm> findById(Long id) {
         String sql = """
                 SELECT id, name, created_at
                 FROM farms
                 WHERE id = ?
                 """;
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new FarmDto.FarmResponse(
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new Farm(
                 rs.getLong("id"),
                 rs.getString("name"),
                 toLocalDateTime(rs.getTimestamp("created_at"))
         ), id).stream().findFirst();
     }
 
-    public int save(FarmDto.FarmResponse farm) {
+    public int save(Farm farm) {
         String sql = """
                 INSERT INTO farms (name)
                 VALUES (?)

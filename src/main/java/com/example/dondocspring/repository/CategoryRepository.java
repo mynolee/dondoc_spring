@@ -1,6 +1,6 @@
 package com.example.dondocspring.repository;
 
-import com.example.dondocspring.dto.record.RecordDto;
+import com.example.dondocspring.entity.Category;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -15,14 +15,14 @@ public class CategoryRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<RecordDto.CategoryResponse> findAll() {
+    public List<Category> findAll() {
         String sql = """
                 SELECT id, name, icon, type
                 FROM categories
                 ORDER BY id
                 """;
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new RecordDto.CategoryResponse(
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new Category(
                 rs.getLong("id"),
                 rs.getString("name"),
                 rs.getString("icon"),
@@ -30,7 +30,7 @@ public class CategoryRepository {
         ));
     }
 
-    public int save(RecordDto.CategoryResponse category) {
+    public int save(Category category) {
         String sql = """
                 INSERT INTO categories (name, icon, type)
                 VALUES (?, ?, ?)

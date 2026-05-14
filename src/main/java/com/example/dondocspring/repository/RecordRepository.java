@@ -1,6 +1,6 @@
 package com.example.dondocspring.repository;
 
-import com.example.dondocspring.dto.record.RecordDto;
+import com.example.dondocspring.entity.RecordEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -19,14 +19,14 @@ public class RecordRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<RecordDto.RecordResponse> findAll() {
+    public List<RecordEntity> findAll() {
         String sql = """
                 SELECT id, user_id, category_id, amount, description, memo, record_date, created_at
                 FROM records
                 ORDER BY id
                 """;
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new RecordDto.RecordResponse(
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new RecordEntity(
                 rs.getLong("id"),
                 rs.getObject("user_id", Long.class),
                 rs.getObject("category_id", Long.class),
@@ -38,7 +38,7 @@ public class RecordRepository {
         ));
     }
 
-    public List<RecordDto.RecordResponse> findByUserId(Long userId) {
+    public List<RecordEntity> findByUserId(Long userId) {
         String sql = """
                 SELECT id, user_id, category_id, amount, description, memo, record_date, created_at
                 FROM records
@@ -46,7 +46,7 @@ public class RecordRepository {
                 ORDER BY id
                 """;
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new RecordDto.RecordResponse(
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new RecordEntity(
                 rs.getLong("id"),
                 rs.getObject("user_id", Long.class),
                 rs.getObject("category_id", Long.class),
@@ -58,7 +58,7 @@ public class RecordRepository {
         ), userId);
     }
 
-    public int save(RecordDto.RecordResponse record) {
+    public int save(RecordEntity record) {
         String sql = """
                 INSERT INTO records (
                     user_id, category_id, amount, description, memo, record_date
