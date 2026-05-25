@@ -1,6 +1,6 @@
 package com.example.dondocspring.repository;
 
-import com.example.dondocspring.dto.user.UserDto;
+import com.example.dondocspring.entity.User;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -18,7 +18,7 @@ public class UserRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<UserDto.UserResponse> findAll() {
+    public List<User> findAll() {
         String sql = """
                 SELECT id, user_id, user_password, name, age, current_pig_level,
                        current_house_level, monthly_income, target_expense_ratio, created_at
@@ -26,7 +26,7 @@ public class UserRepository {
                 ORDER BY id
                 """;
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new UserDto.UserResponse(
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new User(
                 rs.getLong("id"),
                 rs.getString("user_id"),
                 rs.getString("user_password"),
@@ -40,7 +40,7 @@ public class UserRepository {
         ));
     }
 
-    public Optional<UserDto.UserResponse> findById(Long id) {
+    public Optional<User> findById(Long id) {
         String sql = """
                 SELECT id, user_id, user_password, name, age, current_pig_level,
                        current_house_level, monthly_income, target_expense_ratio, created_at
@@ -48,7 +48,7 @@ public class UserRepository {
                 WHERE id = ?
                 """;
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new UserDto.UserResponse(
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new User(
                 rs.getLong("id"),
                 rs.getString("user_id"),
                 rs.getString("user_password"),

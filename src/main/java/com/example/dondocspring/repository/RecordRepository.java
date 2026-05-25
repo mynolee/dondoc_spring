@@ -1,6 +1,8 @@
 package com.example.dondocspring.repository;
 
-import com.example.dondocspring.dto.record.RecordDto;
+import com.example.dondocspring.entity.Category;
+import com.example.dondocspring.entity.MonthlyHistory;
+import com.example.dondocspring.entity.RecordEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -20,14 +22,14 @@ public class RecordRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<RecordDto.CategoryResponse> findAllCategories() {
+    public List<Category> findAllCategories() {
         String sql = """
                 SELECT id, name, icon, type
                 FROM categories
                 ORDER BY id
                 """;
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new RecordDto.CategoryResponse(
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new Category(
                 rs.getLong("id"),
                 rs.getString("name"),
                 rs.getString("icon"),
@@ -35,14 +37,14 @@ public class RecordRepository {
         ));
     }
 
-    public List<RecordDto.RecordResponse> findAllRecords() {
+    public List<RecordEntity> findAllRecords() {
         String sql = """
                 SELECT id, user_id, category_id, amount, description, memo, record_date, created_at
                 FROM records
                 ORDER BY id
                 """;
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new RecordDto.RecordResponse(
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new RecordEntity(
                 rs.getLong("id"),
                 rs.getObject("user_id", Long.class),
                 rs.getObject("category_id", Long.class),
@@ -54,7 +56,7 @@ public class RecordRepository {
         ));
     }
 
-    public List<RecordDto.RecordResponse> findRecordsByUserId(Long userId) {
+    public List<RecordEntity> findRecordsByUserId(Long userId) {
         String sql = """
                 SELECT id, user_id, category_id, amount, description, memo, record_date, created_at
                 FROM records
@@ -62,7 +64,7 @@ public class RecordRepository {
                 ORDER BY id
                 """;
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new RecordDto.RecordResponse(
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new RecordEntity(
                 rs.getLong("id"),
                 rs.getObject("user_id", Long.class),
                 rs.getObject("category_id", Long.class),
@@ -74,14 +76,14 @@ public class RecordRepository {
         ), userId);
     }
 
-    public List<RecordDto.MonthlyHistoryResponse> findAllMonthlyHistories() {
+    public List<MonthlyHistory> findAllMonthlyHistories() {
         String sql = """
                 SELECT id, user_id, target_month, avg_ratio, house_level
                 FROM monthly_history
                 ORDER BY id
                 """;
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new RecordDto.MonthlyHistoryResponse(
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new MonthlyHistory(
                 rs.getLong("id"),
                 rs.getObject("user_id", Long.class),
                 rs.getString("target_month"),
@@ -90,7 +92,7 @@ public class RecordRepository {
         ));
     }
 
-    public Optional<RecordDto.MonthlyHistoryResponse> findMonthlyHistoryByUserId(Long userId) {
+    public Optional<MonthlyHistory> findMonthlyHistoryByUserId(Long userId) {
         String sql = """
                 SELECT id, user_id, target_month, avg_ratio, house_level
                 FROM monthly_history
@@ -99,7 +101,7 @@ public class RecordRepository {
                 LIMIT 1
                 """;
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new RecordDto.MonthlyHistoryResponse(
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new MonthlyHistory(
                 rs.getLong("id"),
                 rs.getObject("user_id", Long.class),
                 rs.getString("target_month"),

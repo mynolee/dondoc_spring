@@ -1,6 +1,7 @@
 package com.example.dondocspring.repository;
 
-import com.example.dondocspring.dto.farm.FarmDto;
+import com.example.dondocspring.entity.Farm;
+import com.example.dondocspring.entity.FarmMember;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -18,42 +19,42 @@ public class FarmRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<FarmDto.FarmResponse> findAll() {
+    public List<Farm> findAll() {
         String sql = """
                 SELECT id, name, created_at
                 FROM farms
                 ORDER BY id
                 """;
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new FarmDto.FarmResponse(
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new Farm(
                 rs.getLong("id"),
                 rs.getString("name"),
                 toLocalDateTime(rs.getTimestamp("created_at"))
         ));
     }
 
-    public Optional<FarmDto.FarmResponse> findById(Long id) {
+    public Optional<Farm> findById(Long id) {
         String sql = """
                 SELECT id, name, created_at
                 FROM farms
                 WHERE id = ?
                 """;
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new FarmDto.FarmResponse(
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new Farm(
                 rs.getLong("id"),
                 rs.getString("name"),
                 toLocalDateTime(rs.getTimestamp("created_at"))
         ), id).stream().findFirst();
     }
 
-    public List<FarmDto.FarmMemberResponse> findAllMembers() {
+    public List<FarmMember> findAllMembers() {
         String sql = """
                 SELECT id, user_id, farm_id, joined_at
                 FROM farm_members
                 ORDER BY id
                 """;
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new FarmDto.FarmMemberResponse(
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new FarmMember(
                 rs.getLong("id"),
                 rs.getObject("user_id", Long.class),
                 rs.getObject("farm_id", Long.class),
@@ -61,7 +62,7 @@ public class FarmRepository {
         ));
     }
 
-    public List<FarmDto.FarmMemberResponse> findMembersByFarmId(Long farmId) {
+    public List<FarmMember> findMembersByFarmId(Long farmId) {
         String sql = """
                 SELECT id, user_id, farm_id, joined_at
                 FROM farm_members
@@ -69,7 +70,7 @@ public class FarmRepository {
                 ORDER BY id
                 """;
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new FarmDto.FarmMemberResponse(
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new FarmMember(
                 rs.getLong("id"),
                 rs.getObject("user_id", Long.class),
                 rs.getObject("farm_id", Long.class),
@@ -77,7 +78,7 @@ public class FarmRepository {
         ), farmId);
     }
 
-    public List<FarmDto.FarmMemberResponse> findMembersByUserId(Long userId) {
+    public List<FarmMember> findMembersByUserId(Long userId) {
         String sql = """
                 SELECT id, user_id, farm_id, joined_at
                 FROM farm_members
@@ -85,7 +86,7 @@ public class FarmRepository {
                 ORDER BY id
                 """;
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new FarmDto.FarmMemberResponse(
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new FarmMember(
                 rs.getLong("id"),
                 rs.getObject("user_id", Long.class),
                 rs.getObject("farm_id", Long.class),

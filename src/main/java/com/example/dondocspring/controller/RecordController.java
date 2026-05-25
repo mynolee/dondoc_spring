@@ -1,7 +1,7 @@
 package com.example.dondocspring.controller;
 
 import com.example.dondocspring.dto.record.RecordDto;
-import com.example.dondocspring.repository.RecordRepository;
+import com.example.dondocspring.service.RecordService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,24 +12,24 @@ import java.util.List;
 @RequestMapping("/api")
 public class RecordController {
 
-    private final RecordRepository recordRepository;
+    private final RecordService recordService;
 
-    public RecordController(RecordRepository recordRepository) {
-        this.recordRepository = recordRepository;
+    public RecordController(RecordService recordService) {
+        this.recordService = recordService;
     }
 
     @GetMapping("/categories")
     public List<RecordDto.CategoryResponse> getCategories() {
-        return recordRepository.findAllCategories();
+        return recordService.getCategories();
     }
 
     @GetMapping("/records")
     public List<RecordDto.RecordResponse> getRecords() {
-        return recordRepository.findAllRecords();
+        return recordService.getRecords();
     }
 
     @GetMapping("/monthly-history")
     public List<RecordDto.MonthlyHistoryResponse> getMonthlyHistories() {
-        return recordRepository.findAllMonthlyHistories();
+        return recordService.getMonthlyHistories();
     }
 }
