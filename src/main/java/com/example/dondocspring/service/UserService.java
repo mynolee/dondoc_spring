@@ -7,7 +7,9 @@ import com.example.dondocspring.entity.FarmMember;
 import com.example.dondocspring.entity.MonthlyHistory;
 import com.example.dondocspring.entity.RecordEntity;
 import com.example.dondocspring.entity.User;
+import com.example.dondocspring.repository.FarmMemberRepository;
 import com.example.dondocspring.repository.FarmRepository;
+import com.example.dondocspring.repository.MonthlyHistoryRepository;
 import com.example.dondocspring.repository.RecordRepository;
 import com.example.dondocspring.repository.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -20,30 +22,33 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final FarmRepository farmRepository;
+    private final FarmMemberRepository farmMemberRepository;
     private final RecordRepository recordRepository;
+    private final MonthlyHistoryRepository monthlyHistoryRepository;
 
     public UserService(
             UserRepository userRepository,
-            FarmRepository farmRepository,
-            RecordRepository recordRepository
+            FarmMemberRepository farmMemberRepository,
+            RecordRepository recordRepository,
+            MonthlyHistoryRepository monthlyHistoryRepository
     ) {
         this.userRepository = userRepository;
-        this.farmRepository = farmRepository;
+        this.farmMemberRepository = farmMemberRepository;
         this.recordRepository = recordRepository;
+        this.monthlyHistoryRepository = monthlyHistoryRepository;
     }
 
     public List<UserDto.UserDetailResponse> getUsers() {
         return userRepository.findAll().stream()
                 .map(user -> new UserDto.UserDetailResponse(
                         toUserResponse(user),
-                        farmRepository.findMembersByUserId(user.id()).stream()
+                        farmMemberRepository.findByUserId(user.id()).stream()
                                 .map(this::toFarmMemberResponse)
                                 .toList(),
-                        recordRepository.findRecordsByUserId(user.id()).stream()
+                        recordRepository.findByUserId(user.id()).stream()
                                 .map(this::toRecordResponse)
                                 .toList(),
-                        recordRepository.findMonthlyHistoryByUserId(user.id())
+                        monthlyHistoryRepository.findByUserId(user.id())
                                 .map(this::toMonthlyHistoryResponse)
                                 .orElse(null)
                 ))
@@ -54,13 +59,13 @@ public class UserService {
         User user = findUser(id);
         return new UserDto.UserDetailResponse(
                 toUserResponse(user),
-                farmRepository.findMembersByUserId(id).stream()
+                farmMemberRepository.findByUserId(id).stream()
                         .map(this::toFarmMemberResponse)
                         .toList(),
-                recordRepository.findRecordsByUserId(id).stream()
+                recordRepository.findByUserId(id).stream()
                         .map(this::toRecordResponse)
                         .toList(),
-                recordRepository.findMonthlyHistoryByUserId(id)
+                monthlyHistoryRepository.findByUserId(id)
                         .map(this::toMonthlyHistoryResponse)
                         .orElse(null)
         );
@@ -70,7 +75,7 @@ public class UserService {
         User user = findUser(id);
         return new UserDto.UserRecordsResponse(
                 toUserResponse(user),
-                recordRepository.findRecordsByUserId(id).stream()
+                recordRepository.findByUserId(id).stream()
                         .map(this::toRecordResponse)
                         .toList()
         );

@@ -4,6 +4,8 @@ import com.example.dondocspring.dto.record.RecordDto;
 import com.example.dondocspring.entity.Category;
 import com.example.dondocspring.entity.MonthlyHistory;
 import com.example.dondocspring.entity.RecordEntity;
+import com.example.dondocspring.repository.CategoryRepository;
+import com.example.dondocspring.repository.MonthlyHistoryRepository;
 import com.example.dondocspring.repository.RecordRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,25 +15,33 @@ import java.util.List;
 public class RecordService {
 
     private final RecordRepository recordRepository;
+    private final CategoryRepository categoryRepository;
+    private final MonthlyHistoryRepository monthlyHistoryRepository;
 
-    public RecordService(RecordRepository recordRepository) {
+    public RecordService(
+            RecordRepository recordRepository,
+            CategoryRepository categoryRepository,
+            MonthlyHistoryRepository monthlyHistoryRepository
+    ) {
         this.recordRepository = recordRepository;
+        this.categoryRepository = categoryRepository;
+        this.monthlyHistoryRepository = monthlyHistoryRepository;
     }
 
     public List<RecordDto.CategoryResponse> getCategories() {
-        return recordRepository.findAllCategories().stream()
+        return categoryRepository.findAll().stream()
                 .map(this::toCategoryResponse)
                 .toList();
     }
 
     public List<RecordDto.RecordResponse> getRecords() {
-        return recordRepository.findAllRecords().stream()
+        return recordRepository.findAll().stream()
                 .map(this::toRecordResponse)
                 .toList();
     }
 
     public List<RecordDto.MonthlyHistoryResponse> getMonthlyHistories() {
-        return recordRepository.findAllMonthlyHistories().stream()
+        return monthlyHistoryRepository.findAll().stream()
                 .map(this::toMonthlyHistoryResponse)
                 .toList();
     }

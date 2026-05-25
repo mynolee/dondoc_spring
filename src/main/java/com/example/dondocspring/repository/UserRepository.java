@@ -62,6 +62,28 @@ public class UserRepository {
         ), id).stream().findFirst();
     }
 
+    public int save(User user) {
+        String sql = """
+                INSERT INTO users (
+                    user_id, user_password, name, age, current_pig_level,
+                    current_house_level, monthly_income, target_expense_ratio
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """;
+
+        return jdbcTemplate.update(
+                sql,
+                user.userId(),
+                user.userPassword(),
+                user.name(),
+                user.age(),
+                user.currentPigLevel(),
+                user.currentHouseLevel(),
+                user.monthlyIncome(),
+                user.targetExpenseRatio()
+        );
+    }
+
     private LocalDateTime toLocalDateTime(Timestamp timestamp) {
         if (timestamp == null) {
             return null;

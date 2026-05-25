@@ -1,7 +1,5 @@
 package com.example.dondocspring.repository;
 
-import com.example.dondocspring.entity.Category;
-import com.example.dondocspring.entity.MonthlyHistory;
 import com.example.dondocspring.entity.RecordEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -11,7 +9,6 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class RecordRepository {
@@ -22,22 +19,7 @@ public class RecordRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Category> findAllCategories() {
-        String sql = """
-                SELECT id, name, icon, type
-                FROM categories
-                ORDER BY id
-                """;
-
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new Category(
-                rs.getLong("id"),
-                rs.getString("name"),
-                rs.getString("icon"),
-                rs.getString("type")
-        ));
-    }
-
-    public List<RecordEntity> findAllRecords() {
+    public List<RecordEntity> findAll() {
         String sql = """
                 SELECT id, user_id, category_id, amount, description, memo, record_date, created_at
                 FROM records
@@ -56,7 +38,7 @@ public class RecordRepository {
         ));
     }
 
-    public List<RecordEntity> findRecordsByUserId(Long userId) {
+    public List<RecordEntity> findByUserId(Long userId) {
         String sql = """
                 SELECT id, user_id, category_id, amount, description, memo, record_date, created_at
                 FROM records
@@ -76,38 +58,23 @@ public class RecordRepository {
         ), userId);
     }
 
-    public List<MonthlyHistory> findAllMonthlyHistories() {
+    public int save(RecordEntity record) {
         String sql = """
-                SELECT id, user_id, target_month, avg_ratio, house_level
-                FROM monthly_history
-                ORDER BY id
+                INSERT INTO records (
+                    user_id, category_id, amount, description, memo, record_date
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
                 """;
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new MonthlyHistory(
-                rs.getLong("id"),
-                rs.getObject("user_id", Long.class),
-                rs.getString("target_month"),
-                rs.getDouble("avg_ratio"),
-                rs.getInt("house_level")
-        ));
-    }
-
-    public Optional<MonthlyHistory> findMonthlyHistoryByUserId(Long userId) {
-        String sql = """
-                SELECT id, user_id, target_month, avg_ratio, house_level
-                FROM monthly_history
-                WHERE user_id = ?
-                ORDER BY id
-                LIMIT 1
-                """;
-
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new MonthlyHistory(
-                rs.getLong("id"),
-                rs.getObject("user_id", Long.class),
-                rs.getString("target_month"),
-                rs.getDouble("avg_ratio"),
-                rs.getInt("house_level")
-        ), userId).stream().findFirst();
+        return jdbcTemplate.update(
+                sql,
+                record.userId(),
+                record.categoryId(),
+                record.amount(),
+                record.description(),
+                record.memo(),
+                record.recordDate()
+        );
     }
 
     private LocalDate toLocalDate(Date date) {

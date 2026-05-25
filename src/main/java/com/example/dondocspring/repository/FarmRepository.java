@@ -1,7 +1,6 @@
 package com.example.dondocspring.repository;
 
 import com.example.dondocspring.entity.Farm;
-import com.example.dondocspring.entity.FarmMember;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -47,51 +46,13 @@ public class FarmRepository {
         ), id).stream().findFirst();
     }
 
-    public List<FarmMember> findAllMembers() {
+    public int save(Farm farm) {
         String sql = """
-                SELECT id, user_id, farm_id, joined_at
-                FROM farm_members
-                ORDER BY id
+                INSERT INTO farms (name)
+                VALUES (?)
                 """;
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new FarmMember(
-                rs.getLong("id"),
-                rs.getObject("user_id", Long.class),
-                rs.getObject("farm_id", Long.class),
-                toLocalDateTime(rs.getTimestamp("joined_at"))
-        ));
-    }
-
-    public List<FarmMember> findMembersByFarmId(Long farmId) {
-        String sql = """
-                SELECT id, user_id, farm_id, joined_at
-                FROM farm_members
-                WHERE farm_id = ?
-                ORDER BY id
-                """;
-
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new FarmMember(
-                rs.getLong("id"),
-                rs.getObject("user_id", Long.class),
-                rs.getObject("farm_id", Long.class),
-                toLocalDateTime(rs.getTimestamp("joined_at"))
-        ), farmId);
-    }
-
-    public List<FarmMember> findMembersByUserId(Long userId) {
-        String sql = """
-                SELECT id, user_id, farm_id, joined_at
-                FROM farm_members
-                WHERE user_id = ?
-                ORDER BY id
-                """;
-
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new FarmMember(
-                rs.getLong("id"),
-                rs.getObject("user_id", Long.class),
-                rs.getObject("farm_id", Long.class),
-                toLocalDateTime(rs.getTimestamp("joined_at"))
-        ), userId);
+        return jdbcTemplate.update(sql, farm.name());
     }
 
     private LocalDateTime toLocalDateTime(Timestamp timestamp) {

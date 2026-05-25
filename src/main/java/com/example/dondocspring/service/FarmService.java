@@ -3,6 +3,7 @@ package com.example.dondocspring.service;
 import com.example.dondocspring.dto.farm.FarmDto;
 import com.example.dondocspring.entity.Farm;
 import com.example.dondocspring.entity.FarmMember;
+import com.example.dondocspring.repository.FarmMemberRepository;
 import com.example.dondocspring.repository.FarmRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -14,9 +15,11 @@ import java.util.List;
 public class FarmService {
 
     private final FarmRepository farmRepository;
+    private final FarmMemberRepository farmMemberRepository;
 
-    public FarmService(FarmRepository farmRepository) {
+    public FarmService(FarmRepository farmRepository, FarmMemberRepository farmMemberRepository) {
         this.farmRepository = farmRepository;
+        this.farmMemberRepository = farmMemberRepository;
     }
 
     public List<FarmDto.FarmResponse> getFarms() {
@@ -33,13 +36,13 @@ public class FarmService {
 
     public List<FarmDto.FarmMemberResponse> getFarmMembersByFarm(Long id) {
         getFarm(id);
-        return farmRepository.findMembersByFarmId(id).stream()
+        return farmMemberRepository.findByFarmId(id).stream()
                 .map(this::toFarmMemberResponse)
                 .toList();
     }
 
     public List<FarmDto.FarmMemberResponse> getFarmMembers() {
-        return farmRepository.findAllMembers().stream()
+        return farmMemberRepository.findAll().stream()
                 .map(this::toFarmMemberResponse)
                 .toList();
     }
